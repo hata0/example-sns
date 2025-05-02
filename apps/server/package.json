@@ -5,6 +5,7 @@
     "with-env": "dotenv -e .env",
     "dev": "pnpm with-env tsx watch src/cmd/server/index.ts",
     "build": "tsc && tsc-alias",
+    "preview": "pnpm with-env node dist/cmd/server/index.js",
     "start": "node dist/cmd/server/index.js",
     "lint:eslint": "eslint . --ext js,jsx,mjs,ts,tsx,mts,mdx",
     "fix:eslint": "pnpm lint:eslint --fix",
