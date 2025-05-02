@@ -1,5 +1,5 @@
 {
-  "name": "turborepo-template",
+  "name": "example-sns",
   "private": true,
   "scripts": {
     "build": "turbo run build",
