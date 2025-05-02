@@ -2,7 +2,8 @@
   "name": "server",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/cmd/server/index.ts",
+    "with-env": "dotenv -e .env",
+    "dev": "pnpm with-env tsx watch src/cmd/server/index.ts",
     "build": "tsc && tsc-alias",
     "start": "node dist/cmd/server/index.js",
     "lint:eslint": "eslint . --ext js,jsx,mjs,ts,tsx,mts,mdx",
