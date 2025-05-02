@@ -1,0 +1,26 @@
+{
+  "name": "turborepo-template",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "check-types": "turbo run check-types",
+    "lint": "pnpm lint:eslint && pnpm lint:prettier",
+    "lint:eslint": "turbo run lint:eslint",
+    "lint:prettier": "prettier --check \"**/*.{js,ts,jsx,tsx,mdx,md}\"",
+    "fix": "pnpm fix:eslint && pnpm fix:prettier",
+    "fix:eslint": "turbo run fix:eslint",
+    "fix:prettier": "prettier --write \"**/*.{js,ts,jsx,tsx,mdx,md}\""
+  },
+  "devDependencies": {
+    "lefthook": "^1.11.10",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "turbo": "^2.5.0",
+    "typescript": "5.8.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
