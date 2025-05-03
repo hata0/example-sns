@@ -1,5 +1,5 @@
 export class PostId {
-  constructor(public readonly id: string | null) {}
+  constructor(public readonly value: string | null) {}
 
   static createAsNull() {
     return new PostId(null);
