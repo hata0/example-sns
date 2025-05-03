@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
-import type { OpenAPIHono } from "@hono/zod-openapi";
+import type { App } from "./hono";
 
-export const createHandler = (app: OpenAPIHono) => {
+export const createHandler = (app: App) => {
   const port = process.env.PORT;
 
   if (!port) {

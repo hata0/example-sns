@@ -4,6 +4,9 @@ import { createHandler } from "@/node";
 import { PrismaClient } from "@/db/postgresql/generated/prisma";
 
 const app = newApp();
+app.notFound((c) => {
+  return c.text("Not Found", 404);
+});
 app.use(
   "*",
   cors({
