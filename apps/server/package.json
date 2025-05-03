@@ -1,6 +1,9 @@
 {
   "name": "server",
   "type": "module",
+  "prisma": {
+    "schema": "./src/db/postgresql/schema.prisma"
+  },
   "scripts": {
     "with-env": "dotenv -e .env",
     "dev": "pnpm with-env tsx watch src/cmd/server/index.ts",
@@ -15,12 +18,14 @@
     "@hono/node-server": "^1.14.1",
     "@hono/swagger-ui": "^0.5.1",
     "@hono/zod-openapi": "^0.19.6",
+    "@prisma/client": "6.7.0",
     "hono": "^4.7.8",
     "tsc-alias": "^1.8.15"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@types/node": "^20.11.17",
+    "prisma": "^6.7.0",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }
