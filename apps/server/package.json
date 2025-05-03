@@ -7,13 +7,16 @@
   },
   "scripts": {
     "with-env": "dotenv -e .env",
+    "with-env:development": "dotenv -e .env.development.local",
     "dev": "pnpm with-env tsx watch src/cmd/server/index.ts",
-    "build": "tsc && tsc-alias",
-    "preview": "pnpm with-env node dist/cmd/server/index.js",
-    "start": "node dist/cmd/server/index.js",
+    "build": "tsup",
+    "preview": "pnpm with-env:development node dist/index.js",
+    "start": "node dist/index.js",
     "lint:eslint": "eslint . --ext js,jsx,mjs,ts,tsx,mts,mdx",
     "fix:eslint": "pnpm lint:eslint --fix",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "migrate:development": "pnpm with-env:development prisma migrate dev",
+    "studio:development": "pnpm with-env:development prisma studio"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -21,14 +24,14 @@
     "@hono/zod-openapi": "^0.19.6",
     "@prisma/client": "6.7.0",
     "hono": "^4.7.8",
-    "neverthrow": "^8.2.0",
-    "tsc-alias": "^1.8.15"
+    "neverthrow": "^8.2.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.7.0",
     "@repo/eslint-config": "workspace:*",
     "@types/node": "^20.11.17",
     "prisma": "^6.7.0",
+    "tsup": "^8.4.0",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   }
