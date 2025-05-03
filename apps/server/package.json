@@ -2,7 +2,8 @@
   "name": "server",
   "type": "module",
   "prisma": {
-    "schema": "./src/db/postgresql/schema.prisma"
+    "schema": "./src/db/postgresql/schema.prisma",
+    "seed": "tsx src/db/postgresql/seed.ts"
   },
   "scripts": {
     "with-env": "dotenv -e .env",
@@ -20,9 +21,11 @@
     "@hono/zod-openapi": "^0.19.6",
     "@prisma/client": "6.7.0",
     "hono": "^4.7.8",
+    "neverthrow": "^8.2.0",
     "tsc-alias": "^1.8.15"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@repo/eslint-config": "workspace:*",
     "@types/node": "^20.11.17",
     "prisma": "^6.7.0",
