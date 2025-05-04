@@ -44,3 +44,9 @@ export class NonEmptyIdError extends SystemError {
     super("id must be null", 500);
   }
 }
+
+export class ValidationError extends SystemError {
+  constructor(message: string) {
+    super(message, 500);
+  }
+}
