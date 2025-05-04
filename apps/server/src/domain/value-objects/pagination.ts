@@ -15,6 +15,17 @@ export class Pagination {
     limit: number,
     page: number,
   ): Result<Pagination, ValidationError> {
+    const res = this.validate(limit, page);
+    if (res.isErr()) {
+      return err(res.error);
+    }
+    return ok(new Pagination(limit, page));
+  }
+
+  private static validate(
+    limit: number,
+    page: number,
+  ): Result<void, ValidationError> {
     const limitOrError = limitSchema.safeParse(limit);
     if (!limitOrError.success) {
       return err(
@@ -27,7 +38,6 @@ export class Pagination {
         new ValidationError("page must be greater than or equal to 1"),
       );
     }
-
-    return ok(new Pagination(limitOrError.data, pageOrError.data));
+    return ok();
   }
 }
