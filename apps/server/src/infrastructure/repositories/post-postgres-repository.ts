@@ -17,7 +17,7 @@ import {
 } from "@/errors";
 import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
 
-export class PostgresPostRepository implements PostRepository {
+export class PostPostgresRepository implements PostRepository {
   constructor(private readonly client: PrismaClient) {}
 
   async findById(id: PostId): Promise<Result<Post, AppError>> {

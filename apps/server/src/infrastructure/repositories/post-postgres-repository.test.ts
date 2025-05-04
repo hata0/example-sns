@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PostgresPostRepository } from "./postgres-post-repository";
+import { PostPostgresRepository } from "./post-postgres-repository";
 import { client } from "@/db/postgresql";
 import { PostId } from "@/domain/value-objects/ids";
 import { postMock, prismaPostMock } from "@/tests/mocks";
@@ -24,8 +24,8 @@ afterAll(async () => {
   await client.post.deleteMany();
 });
 
-describe("PostgresPostRepository", () => {
-  const postRepository = new PostgresPostRepository(client);
+describe("PostPostgresRepository", () => {
+  const postRepository = new PostPostgresRepository(client);
 
   describe("findById", () => {
     it("EmptyIdError", async () => {
