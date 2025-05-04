@@ -3,7 +3,8 @@ import type { PaginationFilter } from "../types";
 import type { PostId } from "../value-objects/ids";
 import type { AppError, Result } from "@/errors";
 
-export type PostFilter = PaginationFilter;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface PostFilter extends PaginationFilter {}
 
 export interface PostRepository {
   findById(id: PostId): Promise<Result<Post, AppError>>;

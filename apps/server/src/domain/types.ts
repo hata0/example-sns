@@ -4,6 +4,6 @@ export interface Entity<Id> {
   readonly id: Id;
 }
 
-export type PaginationFilter = {
+export interface PaginationFilter {
   readonly pagination: Pagination;
-};
+}
