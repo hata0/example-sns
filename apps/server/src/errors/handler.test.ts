@@ -62,8 +62,8 @@ describe("handleError", () => {
 
     const res = await app.request("/");
 
-    const err = new InternalServerError();
-    expect(res.status).toBe(err.status);
-    expect(await res.json()).toEqual({ message: err.message });
+    const e = new InternalServerError();
+    expect(res.status).toBe(e.status);
+    expect(await res.json()).toEqual({ message: e.message });
   });
 });

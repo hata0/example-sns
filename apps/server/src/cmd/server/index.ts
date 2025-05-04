@@ -6,8 +6,8 @@ import { client } from "@/db/postgresql";
 
 const app = newApp();
 app.notFound((c) => {
-  const err = new NotFoundError();
-  return c.json({ message: err.message }, err.status);
+  const e = new NotFoundError();
+  return c.json({ message: e.message }, e.status);
 });
 app.use(
   "*",
