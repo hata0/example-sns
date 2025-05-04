@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
-import type { Post as PrismaPost } from "@/db/postgresql/generated/prisma";
+import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
 import { Post } from "@/domain/entities/post";
 import { PostId } from "@/domain/value-objects/ids";
 
-export const prismaPostMock = (): PrismaPost => {
+export const prismaPostMock = (): PostRecord => {
   const createdAt = faker.date.anytime();
 
   return {

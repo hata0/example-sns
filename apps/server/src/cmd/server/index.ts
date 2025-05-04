@@ -1,11 +1,13 @@
 import { cors } from "hono/cors";
 import { newApp } from "@/hono";
 import { createHandler } from "@/node";
-import { PrismaClient } from "@/db/postgresql/generated/prisma";
+import { NotFoundError } from "@/errors";
+import { client } from "@/db/postgresql";
 
 const app = newApp();
 app.notFound((c) => {
-  return c.text("Not Found", 404);
+  const err = new NotFoundError();
+  return c.json({ message: err.message }, err.status);
 });
 app.use(
   "*",
@@ -19,8 +21,7 @@ app.use(
 
 // TODO: 後で削除
 app.get("/", async (c) => {
-  const prisma = new PrismaClient();
-  const posts = await prisma.post.findMany();
+  const posts = await client.post.findMany();
 
   return c.json({
     posts,

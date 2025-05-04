@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { describe, expect, it } from "vitest";
 import { handleError, handleZodError } from "./handler";
+import { InternalServerError } from "./error";
 
 describe("handleZodError", () => {
   const exampleRoute = createRoute({
@@ -61,7 +62,8 @@ describe("handleError", () => {
 
     const res = await app.request("/");
 
-    expect(res.status).toBe(500);
-    expect(await res.json()).toEqual({ message: "unexpected error occurred" });
+    const err = new InternalServerError();
+    expect(res.status).toBe(err.status);
+    expect(await res.json()).toEqual({ message: err.message });
   });
 });
