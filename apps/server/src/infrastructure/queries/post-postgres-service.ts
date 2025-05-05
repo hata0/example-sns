@@ -1,6 +1,12 @@
-import type { Post } from "@/domain/entities/post";
-import type { PostRepository } from "@/domain/repositories/post-repository";
-import { err, ok, type AppError, type Result } from "@/errors";
+import { getSkip, getTake } from "./utils";
+import {
+  EmptyIdError,
+  err,
+  NotFoundError,
+  ok,
+  type AppError,
+  type Result,
+} from "@/errors";
 import type {
   GetPostQueryServiceDto,
   GetPostQueryServiceInput,
@@ -8,20 +14,26 @@ import type {
   ListPostQueryServiceInput,
   PostQueryService,
 } from "@/application/queries/post-service";
+import type { PrismaClient } from "@/db/postgresql";
+import type { Post } from "@/db/postgresql/generated/prisma";
 
 export class PostPostgresQueryService implements PostQueryService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(private readonly client: PrismaClient) {}
 
   async get(
     input: GetPostQueryServiceInput,
   ): Promise<Result<GetPostQueryServiceDto, AppError>> {
-    const postOrError = await this.postRepository.findById(input.getPostId());
-    if (postOrError.isErr()) {
-      return err(postOrError.error);
+    const id = input.getPostId();
+    if (id.value === null) {
+      return err(new EmptyIdError());
     }
-    return ok({
-      post: this.mapToPost(postOrError.value),
+    const record = await this.client.post.findUnique({
+      where: { id: id.value },
     });
+    if (record === null) {
+      return err(new NotFoundError());
+    }
+    return ok({ post: this.mapToPost(record) });
   }
 
   async list(
@@ -31,21 +43,17 @@ export class PostPostgresQueryService implements PostQueryService {
     if (paginationOrError.isErr()) {
       return err(paginationOrError.error);
     }
-    const postsOrError = await this.postRepository.findMany({
-      pagination: paginationOrError.value,
+    const records = await this.client.post.findMany({
+      skip: getSkip(paginationOrError.value),
+      take: getTake(paginationOrError.value),
     });
-    if (postsOrError.isErr()) {
-      return err(postsOrError.error);
-    }
-    return ok({
-      posts: postsOrError.value.map(this.mapToPost),
-    });
+    return ok({ posts: records.map(this.mapToPost) });
   }
 
   // TODO: openapiで型をつける
   private mapToPost({ id, content, createdAt, updatedAt }: Post) {
     return {
-      id: id.value!,
+      id: id,
       content,
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),

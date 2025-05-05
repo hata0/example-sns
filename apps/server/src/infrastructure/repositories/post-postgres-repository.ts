@@ -1,10 +1,6 @@
-import { getSkip, getTake } from "./utils";
 import { PrismaClient } from "@/db/postgresql";
 import { Post } from "@/domain/entities/post";
-import type {
-  PostFilter,
-  PostRepository,
-} from "@/domain/repositories/post-repository";
+import type { PostRepository } from "@/domain/repositories/post-repository";
 import { PostId } from "@/domain/value-objects/ids";
 import {
   AppError,
@@ -30,16 +26,6 @@ export class PostPostgresRepository implements PostRepository {
       return err(new NotFoundError());
     }
     return ok(this.mapToPost(post));
-  }
-
-  async findMany({
-    pagination,
-  }: PostFilter): Promise<Result<Post[], AppError>> {
-    const posts = await this.client.post.findMany({
-      skip: getSkip(pagination),
-      take: getTake(pagination),
-    });
-    return ok(posts.map(this.mapToPost));
   }
 
   private mapToPost({ id, content, createdAt, updatedAt }: PostRecord): Post {

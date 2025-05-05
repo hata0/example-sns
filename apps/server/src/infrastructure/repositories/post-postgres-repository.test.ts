@@ -13,18 +13,14 @@ import {
 } from "@/errors";
 import { Post } from "@/domain/entities/post";
 
-const posts = generateRandomArray(() => prismaPostMock(), {
-  min: 20,
-  max: 30,
-});
-beforeAll(async () => {
-  await client.post.createMany({ data: posts });
-});
-afterAll(async () => {
-  await client.post.deleteMany();
-});
-
 describe("PostPostgresRepository", () => {
+  const posts = generateRandomArray(() => prismaPostMock());
+  beforeAll(async () => {
+    await client.post.createMany({ data: posts });
+  });
+  afterAll(async () => {
+    await client.post.deleteMany();
+  });
   const postRepository = new PostPostgresRepository(client);
 
   describe("findById", () => {
@@ -46,17 +42,6 @@ describe("PostPostgresRepository", () => {
       expect(res).toEqual(
         ok(new Post(new PostId(id), content, createdAt, updatedAt)),
       );
-    });
-  });
-
-  describe("findMany", () => {
-    it("ok", async () => {
-      const res = await postRepository.findMany({
-        pagination: { limit: 8, page: 2 },
-      });
-      expect(res.isOk()).toBe(true);
-      expect(res._unsafeUnwrap().length).toBe(8);
-      expect(res._unsafeUnwrap()[0]).toBeInstanceOf(Post);
     });
   });
 

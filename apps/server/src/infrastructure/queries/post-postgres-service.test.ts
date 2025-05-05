@@ -1,46 +1,59 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PostPostgresQueryService } from "./post-postgres-service";
-import type { PostRepository } from "@/domain/repositories/post-repository";
-import { err, InternalServerError, ok, ValidationError } from "@/errors";
+import {
+  EmptyIdError,
+  err,
+  NotFoundError,
+  ok,
+  ValidationError,
+} from "@/errors";
 import {
   GetPostQueryServiceInput,
   ListPostQueryServiceInput,
 } from "@/application/queries/post-service";
-import { postMock } from "@/tests/mocks";
+import { postMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
+import { client } from "@/db/postgresql";
+import { PostSchema } from "@/openapi/schema";
 
 describe("PostPostgresQueryService", () => {
-  const postRepository = {
-    findById: vi.fn(),
-    findMany: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
-  } satisfies PostRepository;
-  const error = err(new InternalServerError());
-  const postQueryService = new PostPostgresQueryService(postRepository);
+  const posts = generateRandomArray(() => prismaPostMock(), {
+    min: 20,
+    max: 30,
+  });
+  beforeAll(async () => {
+    await client.post.createMany({ data: posts });
+  });
+  afterAll(async () => {
+    await client.post.deleteMany();
+  });
+  const service = new PostPostgresQueryService(client);
 
   describe("get", () => {
-    const post = postMock();
-    const input = new GetPostQueryServiceInput(post.id.value!);
+    it("EmptyIdError", async () => {
+      const input = new GetPostQueryServiceInput(null!);
+      const res = await service.get(input);
+      expect(res).toEqual(err(new EmptyIdError()));
+    });
 
-    it("err", async () => {
-      postRepository.findById.mockResolvedValueOnce(error);
-      const res = await postQueryService.get(input);
-      expect(res).toEqual(error);
+    it("NotFoundError", async () => {
+      const { id } = postMock();
+      const input = new GetPostQueryServiceInput(id.value!);
+      const res = await service.get(input);
+      expect(res).toEqual(err(new NotFoundError()));
     });
 
     it("ok", async () => {
-      postRepository.findById.mockResolvedValueOnce(ok(post));
-      const res = await postQueryService.get(input);
-      expect(postRepository.findById).toHaveBeenCalledWith(post.id);
+      const { id, content, createdAt, updatedAt } = posts[0];
+      const input = new GetPostQueryServiceInput(id);
+      const res = await service.get(input);
       expect(res).toEqual(
         ok({
           post: {
-            id: post.id.value!,
-            content: post.content,
-            createdAt: post.createdAt.toISOString(),
-            updatedAt: post.updatedAt.toISOString(),
+            id,
+            content,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
           },
         }),
       );
@@ -48,38 +61,21 @@ describe("PostPostgresQueryService", () => {
   });
 
   describe("list", () => {
-    it("getPaginationでValidationError", async () => {
+    it("ValidationError", async () => {
       const input = new ListPostQueryServiceInput(0, 1);
-      const res = await postQueryService.list(input);
+      const res = await service.list(input);
       expect(res.isErr()).toBe(true);
       expect(res._unsafeUnwrapErr()).toBeInstanceOf(ValidationError);
     });
 
-    const input = new ListPostQueryServiceInput(1, 1);
-
-    it("findManyでerr", async () => {
-      postRepository.findMany.mockResolvedValueOnce(error);
-      const res = await postQueryService.list(input);
-      expect(res).toEqual(error);
-    });
-
     it("ok", async () => {
-      const posts = generateRandomArray(() => postMock());
-      postRepository.findMany.mockResolvedValueOnce(ok(posts));
-      const res = await postQueryService.list(input);
-      expect(postRepository.findMany).toHaveBeenCalledWith({
-        pagination: input.getPagination()._unsafeUnwrap(),
-      });
-      expect(res).toEqual(
-        ok({
-          posts: posts.map((p) => ({
-            id: p.id.value!,
-            content: p.content,
-            createdAt: p.createdAt.toISOString(),
-            updatedAt: p.updatedAt.toISOString(),
-          })),
-        }),
-      );
+      const input = new ListPostQueryServiceInput(8, 2);
+      const res = await service.list(input);
+      expect(res.isOk()).toBe(true);
+      expect(res._unsafeUnwrap().posts.length).toBe(8);
+      expect(
+        res._unsafeUnwrap().posts.find((p) => !PostSchema.safeParse(p).success),
+      ).toBeUndefined();
     });
   });
 });
