@@ -1,19 +1,37 @@
 import { Post } from "@/domain/entities/post";
 import type { PostRepository } from "@/domain/repositories/post-repository";
-import type { PostId } from "@/domain/value-objects/ids";
+import { PostId } from "@/domain/value-objects/ids";
 import { err, ok, type AppError, type Result } from "@/errors";
 
-export interface CreatePostCommand {
-  getPostContent(): string;
+export class CreatePostCommand {
+  constructor(private readonly postContent: string) {}
+
+  getPostContent(): string {
+    return this.postContent;
+  }
 }
 
-export interface UpdatePostCommand {
-  getPostId(): PostId;
-  getPostContent(): string;
+export class UpdatePostCommand {
+  constructor(
+    private readonly postId: string,
+    private readonly postContent: string,
+  ) {}
+
+  getPostId(): PostId {
+    return new PostId(this.postId);
+  }
+
+  getPostContent(): string {
+    return this.postContent;
+  }
 }
 
-export interface DeletePostCommand {
-  getPostId(): PostId;
+export class DeletePostCommand {
+  constructor(private readonly postId: string) {}
+
+  getPostId(): PostId {
+    return new PostId(this.postId);
+  }
 }
 
 export class PostApplicationService {
