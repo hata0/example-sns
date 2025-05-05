@@ -1,16 +1,16 @@
-import type { ContentfulStatusCode } from "hono/utils/http-status";
+export type ErrorStatusCode = 400 | 404 | 500;
 
 export class BaseError extends Error {
   constructor(
     public readonly message: string,
-    public readonly status: ContentfulStatusCode,
+    public readonly status: ErrorStatusCode,
   ) {
     super();
   }
 }
 
 export class AppError extends BaseError {
-  constructor(message: string, status: ContentfulStatusCode) {
+  constructor(message: string, status: ErrorStatusCode) {
     super(message, status);
   }
 }
@@ -27,26 +27,28 @@ export class InternalServerError extends AppError {
   }
 }
 
-export class SystemError extends AppError {
-  constructor(message: string, status: ContentfulStatusCode) {
-    super(message, status);
+// TODO: logの取り方は余裕があれば改善する
+export class SystemError extends InternalServerError {
+  constructor(message: string) {
+    console.log(message);
+    super();
   }
 }
 
 export class EmptyIdError extends SystemError {
   constructor() {
-    super("empty id", 500);
+    super("empty id");
   }
 }
 
 export class NonEmptyIdError extends SystemError {
   constructor() {
-    super("id must be null", 500);
+    super("id must be null");
   }
 }
 
 export class ValidationError extends SystemError {
   constructor(message: string) {
-    super(message, 500);
+    super(message);
   }
 }
