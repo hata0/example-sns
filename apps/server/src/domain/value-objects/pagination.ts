@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { err, ok, ValidationError, type Result } from "@/errors";
 
-// TODO: ここはOpenapiにすべきか後で検討する
 const limitSchema = z.number().min(1);
 const pageSchema = z.number().min(1);
 

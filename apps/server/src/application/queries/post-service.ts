@@ -1,8 +1,10 @@
 import { PostId } from "@/domain/value-objects/ids";
 import { Pagination } from "@/domain/value-objects/pagination";
 import { ValidationError, type AppError, type Result } from "@/errors";
-
-// TODO: Dtoはopenapiの定義に基づくようにする
+import type {
+  GetPostsResponse,
+  ListPostsResponse,
+} from "@/openapi/schema/post";
 
 export class GetPostQueryServiceInput {
   constructor(private readonly postId: string) {}
@@ -10,15 +12,6 @@ export class GetPostQueryServiceInput {
   getPostId(): PostId {
     return new PostId(this.postId);
   }
-}
-
-export interface GetPostQueryServiceDto {
-  post: {
-    id: string;
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-  };
 }
 
 export class ListPostQueryServiceInput {
@@ -32,20 +25,11 @@ export class ListPostQueryServiceInput {
   }
 }
 
-export interface ListPostQueryServiceDto {
-  posts: {
-    id: string;
-    content: string;
-    createdAt: string;
-    updatedAt: string;
-  }[];
-}
-
 export interface PostQueryService {
   get(
     input: GetPostQueryServiceInput,
-  ): Promise<Result<GetPostQueryServiceDto, AppError>>;
+  ): Promise<Result<GetPostsResponse, AppError>>;
   list(
     input: ListPostQueryServiceInput,
-  ): Promise<Result<ListPostQueryServiceDto, AppError>>;
+  ): Promise<Result<ListPostsResponse, AppError>>;
 }

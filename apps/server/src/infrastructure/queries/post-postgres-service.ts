@@ -8,21 +8,24 @@ import {
   type Result,
 } from "@/errors";
 import type {
-  GetPostQueryServiceDto,
   GetPostQueryServiceInput,
-  ListPostQueryServiceDto,
   ListPostQueryServiceInput,
   PostQueryService,
 } from "@/application/queries/post-service";
 import type { PrismaClient } from "@/db/postgresql";
-import type { Post } from "@/db/postgresql/generated/prisma";
+import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
+import type { Post as PostSchema } from "@/openapi/schema/post";
+import type {
+  GetPostsResponse,
+  ListPostsResponse,
+} from "@/openapi/schema/post";
 
 export class PostPostgresQueryService implements PostQueryService {
   constructor(private readonly client: PrismaClient) {}
 
   async get(
     input: GetPostQueryServiceInput,
-  ): Promise<Result<GetPostQueryServiceDto, AppError>> {
+  ): Promise<Result<GetPostsResponse, AppError>> {
     const id = input.getPostId();
     if (id.value === null) {
       return err(new EmptyIdError());
@@ -38,7 +41,7 @@ export class PostPostgresQueryService implements PostQueryService {
 
   async list(
     input: ListPostQueryServiceInput,
-  ): Promise<Result<ListPostQueryServiceDto, AppError>> {
+  ): Promise<Result<ListPostsResponse, AppError>> {
     const paginationOrError = input.getPagination();
     if (paginationOrError.isErr()) {
       return err(paginationOrError.error);
@@ -50,8 +53,12 @@ export class PostPostgresQueryService implements PostQueryService {
     return ok({ posts: records.map(this.mapToPost) });
   }
 
-  // TODO: openapiで型をつける
-  private mapToPost({ id, content, createdAt, updatedAt }: Post) {
+  private mapToPost({
+    id,
+    content,
+    createdAt,
+    updatedAt,
+  }: PostRecord): PostSchema {
     return {
       id: id,
       content,
