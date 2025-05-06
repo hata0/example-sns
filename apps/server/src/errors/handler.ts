@@ -25,7 +25,12 @@ export const handleZodError = <E extends Env>(
   }
 };
 
-export const handleError = <E extends Env>(_: Error, c: Context<E>) => {
+export const handleError = <E extends Env>(error: Error, c: Context<E>) => {
+  if (error instanceof ZodError) {
+    // TODO: logの取り方を改善する
+    console.log(error);
+  }
+
   const error500 = new InternalServerError();
   return c.json({ message: error500.message }, error500.status);
 };

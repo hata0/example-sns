@@ -30,7 +30,7 @@ export class InternalServerError extends AppError {
 // TODO: logの取り方は余裕があれば改善する
 export class SystemError extends InternalServerError {
   constructor(message: string) {
-    console.log(message);
+    // console.log(message);
     super();
   }
 }
