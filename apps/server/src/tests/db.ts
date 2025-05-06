@@ -1,4 +1,3 @@
-/* eslint-disable turbo/no-undeclared-env-vars */
 import { execSync } from "child_process";
 import { PrismaClientKnownRequestError } from "@/db/postgresql/generated/prisma/internal/prismaNamespace";
 import { client } from "@/db/postgresql";

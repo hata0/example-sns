@@ -29,6 +29,7 @@ export class InternalServerError extends AppError {
 
 // TODO: logの取り方は余裕があれば改善する
 export class SystemError extends InternalServerError {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(message: string) {
     // console.log(message);
     super();
