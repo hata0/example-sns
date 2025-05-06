@@ -13,21 +13,27 @@ import {
 } from "@/application/queries/post-service";
 import { postMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
-import { client } from "@/db/postgresql";
-import { PostSchema } from "@/openapi/schema";
+import { PrismaClient } from "@/db/postgresql";
+import { PostSchema } from "@/openapi/schema/post";
+import { setupDatabase } from "@/tests/db";
 
 describe("PostPostgresQueryService", () => {
   const posts = generateRandomArray(() => prismaPostMock(), {
     min: 20,
     max: 30,
   });
+  let client: PrismaClient;
+  let service: PostPostgresQueryService;
+
   beforeAll(async () => {
+    await setupDatabase();
+    client = new PrismaClient();
+    service = new PostPostgresQueryService(client);
     await client.post.createMany({ data: posts });
   });
   afterAll(async () => {
     await client.post.deleteMany();
   });
-  const service = new PostPostgresQueryService(client);
 
   describe("get", () => {
     it("EmptyIdError", async () => {
