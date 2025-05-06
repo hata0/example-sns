@@ -69,3 +69,5 @@ export const createContainer = (): Container => {
 
   return container;
 };
+
+export const container = createContainer();

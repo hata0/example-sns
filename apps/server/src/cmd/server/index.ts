@@ -2,7 +2,7 @@ import { cors } from "hono/cors";
 import { newApp } from "@/hono";
 import { createHandler } from "@/node";
 import { NotFoundError } from "@/errors";
-import { PostgresDatabase } from "@/infrastructure/database/postgresql";
+import { registerPostApi } from "@/router/post";
 
 const app = newApp();
 app.notFound((c) => {
@@ -19,14 +19,6 @@ app.use(
   }),
 );
 
-// TODO: 後で削除
-app.get("/", async (c) => {
-  const db = new PostgresDatabase();
-  const posts = await db.post.findMany();
-
-  return c.json({
-    posts,
-  });
-});
+registerPostApi(app);
 
 createHandler(app);
