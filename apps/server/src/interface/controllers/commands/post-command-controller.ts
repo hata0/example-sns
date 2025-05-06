@@ -1,4 +1,5 @@
 import type { RouteConfigToTypedResponse } from "@hono/zod-openapi";
+import { inject, injectable } from "inversify";
 import {
   CreatePostCommand,
   DeletePostCommand,
@@ -11,9 +12,14 @@ import type {
   DeletePostsRoute,
   UpdatePostsRoute,
 } from "@/openapi/path/post";
+import { APPLICATION_SERVICE_BINDINGS } from "@/inversify";
 
+@injectable()
 export class PostCommandController {
-  constructor(private readonly service: PostApplicationService) {}
+  constructor(
+    @inject(APPLICATION_SERVICE_BINDINGS.PostApplicationService)
+    private readonly service: PostApplicationService,
+  ) {}
 
   async create(
     c: AppContext<CreatePostsRoute>,

@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Container } from "inversify";
 import { PostPostgresQueryService } from "./post-postgres-service";
 import {
   EmptyIdError,
@@ -13,23 +14,32 @@ import {
 } from "@/application/queries/post-service";
 import { postSchemaMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
-import { PrismaClient } from "@/db/postgresql";
+import { PostgresDatabase } from "@/db/postgresql";
 import { PostSchema } from "@/openapi/schema/post";
 import { setupDatabase } from "@/tests/db";
+import { DATABASE_BINDINGS } from "@/inversify";
 
 describe("PostPostgresQueryService", () => {
   const posts = generateRandomArray(() => prismaPostMock(), {
     min: 20,
     max: 30,
   });
-  let client: PrismaClient;
+  let client: PostgresDatabase;
   let service: PostPostgresQueryService;
 
   beforeAll(async () => {
     await setupDatabase();
-    client = new PrismaClient();
-    service = new PostPostgresQueryService(client);
+
+    const container = new Container();
+    container
+      .bind<PostgresDatabase>(DATABASE_BINDINGS.PostgresDatabase)
+      .to(PostgresDatabase);
+    container.bind(PostPostgresQueryService).toSelf();
+
+    client = new PostgresDatabase();
     await client.post.createMany({ data: posts });
+
+    service = container.get(PostPostgresQueryService);
   });
   afterAll(async () => {
     await client.post.deleteMany();

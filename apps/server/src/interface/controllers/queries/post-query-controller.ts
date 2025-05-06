@@ -1,4 +1,5 @@
 import type { RouteConfigToTypedResponse } from "@hono/zod-openapi";
+import { inject, injectable } from "inversify";
 import {
   GetPostQueryServiceInput,
   ListPostQueryServiceInput,
@@ -10,9 +11,14 @@ import {
   GetPostsResponseSchema,
   ListPostsResponseSchema,
 } from "@/openapi/schema/post";
+import { QUERY_SERVICE_BINDINGS } from "@/inversify";
 
+@injectable()
 export class PostQueryController {
-  constructor(private readonly service: PostQueryService) {}
+  constructor(
+    @inject(QUERY_SERVICE_BINDINGS.PostQueryService)
+    private readonly service: PostQueryService,
+  ) {}
 
   async get(
     c: AppContext<GetPostsRoute>,

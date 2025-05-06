@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { Container } from "inversify";
 import { PostQueryController } from "./post-query-controller";
 import {
   GetPostQueryServiceInput,
@@ -15,16 +16,25 @@ import type {
 } from "@/openapi/schema/post";
 import { generateRandomArray } from "@/utils/array";
 import { RequestClient } from "@/tests/request";
+import { QUERY_SERVICE_BINDINGS } from "@/inversify";
 
 describe("PostQueryController", () => {
   const service = {
     get: vi.fn(),
     list: vi.fn(),
   } satisfies PostQueryService;
-  const controller = new PostQueryController(service);
+
+  const container = new Container();
+  container
+    .bind<PostQueryService>(QUERY_SERVICE_BINDINGS.PostQueryService)
+    .toConstantValue(service);
+  container.bind(PostQueryController).toSelf();
+
+  const controller = container.get(PostQueryController);
+
   const app = new OpenAPIHono();
-  app.openapi(getPostsRouteConfig, controller.get.bind(controller));
-  app.openapi(listPostsRouteConfig, controller.list.bind(controller));
+  app.openapi(getPostsRouteConfig, (c) => controller.get(c));
+  app.openapi(listPostsRouteConfig, (c) => controller.list(c));
   const client = new RequestClient(app, "/posts");
   const e = new InternalServerError();
   const errorResponse = { message: e.message };

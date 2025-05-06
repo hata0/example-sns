@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { Container } from "inversify";
 import { PostCommandController } from "./post-command-controller";
 import {
   CreatePostCommand,
   DeletePostCommand,
+  PostApplicationService,
   UpdatePostCommand,
-  type PostApplicationService,
 } from "@/application/commands/post-service";
 import {
   createPostsRouteConfig,
@@ -15,6 +16,7 @@ import {
 import { err, InternalServerError, ok } from "@/errors";
 import { postSchemaMock } from "@/tests/mocks";
 import { RequestClient } from "@/tests/request";
+import { APPLICATION_SERVICE_BINDINGS } from "@/inversify";
 
 describe("PostCommandController", () => {
   const service = {
@@ -22,13 +24,21 @@ describe("PostCommandController", () => {
     update: vi.fn(),
     delete: vi.fn(),
   };
-  const controller = new PostCommandController(
-    service as unknown as PostApplicationService,
-  );
+
+  const container = new Container();
+  container
+    .bind<PostApplicationService>(
+      APPLICATION_SERVICE_BINDINGS.PostApplicationService,
+    )
+    .toConstantValue(service as unknown as PostApplicationService);
+  container.bind(PostCommandController).toSelf();
+
+  const controller = container.get(PostCommandController);
+
   const app = new OpenAPIHono();
-  app.openapi(createPostsRouteConfig, controller.create.bind(controller));
-  app.openapi(updatePostsRouteConfig, controller.update.bind(controller));
-  app.openapi(deletePostsRouteConfig, controller.delete.bind(controller));
+  app.openapi(createPostsRouteConfig, (c) => controller.create(c));
+  app.openapi(updatePostsRouteConfig, (c) => controller.update(c));
+  app.openapi(deletePostsRouteConfig, (c) => controller.delete(c));
   const client = new RequestClient(app, "/posts");
   const e = new InternalServerError();
   const errorResponse = { message: e.message };

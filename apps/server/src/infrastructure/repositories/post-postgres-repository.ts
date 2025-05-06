@@ -1,4 +1,5 @@
-import { PrismaClient } from "@/db/postgresql";
+import { inject, injectable } from "inversify";
+import { PostgresDatabase } from "@/db/postgresql";
 import { Post } from "@/domain/entities/post";
 import type { PostRepository } from "@/domain/repositories/post-repository";
 import { PostId } from "@/domain/value-objects/ids";
@@ -12,16 +13,21 @@ import {
   Result,
 } from "@/errors";
 import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
+import { DATABASE_BINDINGS } from "@/inversify";
 
+@injectable()
 export class PostPostgresRepository implements PostRepository {
-  constructor(private readonly client: PrismaClient) {}
+  constructor(
+    @inject(DATABASE_BINDINGS.PostgresDatabase)
+    private readonly db: PostgresDatabase,
+  ) {}
 
   async findById(id: PostId): Promise<Result<Post, AppError>> {
     if (id.value === null) {
       return err(new EmptyIdError());
     }
 
-    const post = await this.client.post.findUnique({ where: { id: id.value } });
+    const post = await this.db.post.findUnique({ where: { id: id.value } });
     if (post === null) {
       return err(new NotFoundError());
     }
@@ -42,7 +48,7 @@ export class PostPostgresRepository implements PostRepository {
       return err(new NonEmptyIdError());
     }
 
-    await this.client.post.create({ data: { content, createdAt, updatedAt } });
+    await this.db.post.create({ data: { content, createdAt, updatedAt } });
     return ok();
   }
 
@@ -56,7 +62,7 @@ export class PostPostgresRepository implements PostRepository {
       return err(new EmptyIdError());
     }
 
-    await this.client.post.update({
+    await this.db.post.update({
       where: { id: id.value },
       data: { content, createdAt, updatedAt },
     });
@@ -68,7 +74,7 @@ export class PostPostgresRepository implements PostRepository {
       return err(new EmptyIdError());
     }
 
-    await this.client.post.delete({ where: { id: id.value } });
+    await this.db.post.delete({ where: { id: id.value } });
     return ok();
   }
 }

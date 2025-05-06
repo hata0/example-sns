@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { Container } from "inversify";
 import {
   CreatePostCommand,
   DeletePostCommand,
@@ -11,6 +12,7 @@ import { fixDate } from "@/utils/date";
 import { Post } from "@/domain/entities/post";
 import { postMock, postSchemaMock } from "@/tests/mocks";
 import { PostId } from "@/domain/value-objects/ids";
+import { REPOSITORY_BINDINGS } from "@/inversify";
 
 describe("CreatePostCommand", () => {
   const { content } = postSchemaMock();
@@ -59,7 +61,14 @@ describe("PostApplicationService", () => {
     update: vi.fn(),
     delete: vi.fn(),
   } satisfies PostRepository;
-  const postApplicationService = new PostApplicationService(postRepository);
+
+  const container = new Container();
+  container
+    .bind<PostRepository>(REPOSITORY_BINDINGS.PostRepository)
+    .toConstantValue(postRepository);
+  container.bind(PostApplicationService).toSelf();
+
+  const postApplicationService = container.get(PostApplicationService);
   const error = err(new InternalServerError());
 
   describe("create", () => {

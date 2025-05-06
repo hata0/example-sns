@@ -2,7 +2,7 @@ import { cors } from "hono/cors";
 import { newApp } from "@/hono";
 import { createHandler } from "@/node";
 import { NotFoundError } from "@/errors";
-import { client } from "@/db/postgresql";
+import { PostgresDatabase } from "@/db/postgresql";
 
 const app = newApp();
 app.notFound((c) => {
@@ -21,7 +21,8 @@ app.use(
 
 // TODO: 後で削除
 app.get("/", async (c) => {
-  const posts = await client.post.findMany();
+  const db = new PostgresDatabase();
+  const posts = await db.post.findMany();
 
   return c.json({
     posts,

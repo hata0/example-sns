@@ -1,7 +1,9 @@
+import { inject, injectable } from "inversify";
 import { Post } from "@/domain/entities/post";
 import type { PostRepository } from "@/domain/repositories/post-repository";
 import { PostId } from "@/domain/value-objects/ids";
 import { err, ok, type AppError, type Result } from "@/errors";
+import { REPOSITORY_BINDINGS } from "@/inversify";
 
 export class CreatePostCommand {
   constructor(private readonly postContent: string) {}
@@ -34,8 +36,12 @@ export class DeletePostCommand {
   }
 }
 
+@injectable()
 export class PostApplicationService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    @inject(REPOSITORY_BINDINGS.PostRepository)
+    private readonly postRepository: PostRepository,
+  ) {}
 
   async create(command: CreatePostCommand): Promise<Result<void, AppError>> {
     const post = Post.createNew(command.getPostContent());

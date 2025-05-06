@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     clearMocks: true,
     environment: "node",
+    setupFiles: ["./vitest.setup.ts"],
   },
   resolve: {
     alias: {

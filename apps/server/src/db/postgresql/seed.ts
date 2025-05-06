@@ -1,11 +1,13 @@
 import { fromPromise } from "neverthrow";
-import { client } from ".";
+import { PostgresDatabase } from "./";
 import { prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
 
 (async () => {
+  const db = new PostgresDatabase();
+
   const postsOrError = await fromPromise(
-    client.post.createMany({
+    db.post.createMany({
       data: generateRandomArray(() => prismaPostMock()),
     }),
     (e) => e,
@@ -14,11 +16,11 @@ import { generateRandomArray } from "@/utils/array";
   await postsOrError.match(
     async (posts) => {
       console.log(posts);
-      await client.$disconnect();
+      await db.$disconnect();
     },
     async (e) => {
       console.error(e);
-      await client.$disconnect();
+      await db.$disconnect();
       process.exit(1);
     },
   );

@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import { getSkip, getTake } from "./utils";
 import {
   EmptyIdError,
@@ -12,16 +13,21 @@ import type {
   ListPostQueryServiceInput,
   PostQueryService,
 } from "@/application/queries/post-service";
-import type { PrismaClient } from "@/db/postgresql";
+import type { PostgresDatabase } from "@/db/postgresql";
 import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
 import type { Post as PostSchema } from "@/openapi/schema/post";
 import type {
   GetPostsResponse,
   ListPostsResponse,
 } from "@/openapi/schema/post";
+import { DATABASE_BINDINGS } from "@/inversify";
 
+@injectable()
 export class PostPostgresQueryService implements PostQueryService {
-  constructor(private readonly client: PrismaClient) {}
+  constructor(
+    @inject(DATABASE_BINDINGS.PostgresDatabase)
+    private readonly db: PostgresDatabase,
+  ) {}
 
   async get(
     input: GetPostQueryServiceInput,
@@ -30,7 +36,7 @@ export class PostPostgresQueryService implements PostQueryService {
     if (id.value === null) {
       return err(new EmptyIdError());
     }
-    const record = await this.client.post.findUnique({
+    const record = await this.db.post.findUnique({
       where: { id: id.value },
     });
     if (record === null) {
@@ -46,7 +52,7 @@ export class PostPostgresQueryService implements PostQueryService {
     if (paginationOrError.isErr()) {
       return err(paginationOrError.error);
     }
-    const records = await this.client.post.findMany({
+    const records = await this.db.post.findMany({
       skip: getSkip(paginationOrError.value),
       take: getTake(paginationOrError.value),
     });

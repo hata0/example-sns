@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Container } from "inversify";
 import { PostPostgresRepository } from "./post-postgres-repository";
-import { PrismaClient } from "@/db/postgresql";
+import { PostgresDatabase } from "@/db/postgresql";
 import { PostId } from "@/domain/value-objects/ids";
 import { postMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
@@ -13,17 +14,27 @@ import {
 } from "@/errors";
 import { Post } from "@/domain/entities/post";
 import { setupDatabase } from "@/tests/db";
+import { DATABASE_BINDINGS } from "@/inversify";
+import type { PostRepository } from "@/domain/repositories/post-repository";
 
 describe("PostPostgresRepository", () => {
   const posts = generateRandomArray(() => prismaPostMock());
-  let client: PrismaClient;
-  let repository: PostPostgresRepository;
+  let client: PostgresDatabase;
+  let repository: PostRepository;
 
   beforeAll(async () => {
     await setupDatabase();
-    client = new PrismaClient();
-    repository = new PostPostgresRepository(client);
+
+    const container = new Container();
+    container
+      .bind<PostgresDatabase>(DATABASE_BINDINGS.PostgresDatabase)
+      .to(PostgresDatabase);
+    container.bind(PostPostgresRepository).toSelf();
+
+    client = new PostgresDatabase();
     await client.post.createMany({ data: posts });
+
+    repository = container.get(PostPostgresRepository);
   });
   afterAll(async () => {
     await client.post.deleteMany();
