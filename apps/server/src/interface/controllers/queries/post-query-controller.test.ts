@@ -66,8 +66,8 @@ describe("PostQueryController", () => {
       min: 4,
       max: 4,
     });
-    const limit = 4;
-    const page = 3;
+    const limit = "4";
+    const page = "3";
 
     it("500", async () => {
       service.list.mockResolvedValueOnce(err(e));

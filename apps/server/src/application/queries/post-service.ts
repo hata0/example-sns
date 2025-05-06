@@ -16,12 +16,12 @@ export class GetPostQueryServiceInput {
 
 export class ListPostQueryServiceInput {
   constructor(
-    private readonly limit: number,
-    private readonly page: number,
+    private readonly limit: string,
+    private readonly page: string,
   ) {}
 
   getPagination(): Result<Pagination, ValidationError> {
-    return Pagination.create(this.limit, this.page);
+    return Pagination.create(Number(this.limit), Number(this.page));
   }
 }
 

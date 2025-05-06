@@ -21,14 +21,14 @@ describe("GetPostQueryServiceInput", () => {
 describe("ListPostQueryServiceInput", () => {
   describe("getPagination", () => {
     it("ValidationError", () => {
-      const input = new ListPostQueryServiceInput(0, 1);
+      const input = new ListPostQueryServiceInput("0", "1");
       const res = input.getPagination();
       expect(res.isErr()).toBe(true);
       expect(res._unsafeUnwrapErr()).toBeInstanceOf(ValidationError);
     });
 
     it("ok", () => {
-      const input = new ListPostQueryServiceInput(10, 2);
+      const input = new ListPostQueryServiceInput("10", "2");
       const res = input.getPagination();
       expect(res).toEqual(ok({ limit: 10, page: 2 }));
     });
