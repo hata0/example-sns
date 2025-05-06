@@ -78,14 +78,14 @@ describe("PostPostgresQueryService", () => {
 
   describe("list", () => {
     it("ValidationError", async () => {
-      const input = new ListPostQueryServiceInput(0, 1);
+      const input = new ListPostQueryServiceInput("0", "1");
       const res = await service.list(input);
       expect(res.isErr()).toBe(true);
       expect(res._unsafeUnwrapErr()).toBeInstanceOf(ValidationError);
     });
 
     it("ok", async () => {
-      const input = new ListPostQueryServiceInput(8, 2);
+      const input = new ListPostQueryServiceInput("8", "2");
       const res = await service.list(input);
       expect(res.isOk()).toBe(true);
       expect(res._unsafeUnwrap().posts.length).toBe(8);
