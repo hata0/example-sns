@@ -11,7 +11,7 @@ import {
   GetPostQueryServiceInput,
   ListPostQueryServiceInput,
 } from "@/application/queries/post-service";
-import { postMock, prismaPostMock } from "@/tests/mocks";
+import { postSchemaMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
 import { PrismaClient } from "@/db/postgresql";
 import { PostSchema } from "@/openapi/schema/post";
@@ -43,8 +43,8 @@ describe("PostPostgresQueryService", () => {
     });
 
     it("NotFoundError", async () => {
-      const { id } = postMock();
-      const input = new GetPostQueryServiceInput(id.value!);
+      const { id } = postSchemaMock();
+      const input = new GetPostQueryServiceInput(id);
       const res = await service.get(input);
       expect(res).toEqual(err(new NotFoundError()));
     });

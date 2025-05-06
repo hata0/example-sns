@@ -7,12 +7,13 @@ import {
 } from "./post-service";
 import type { PostRepository } from "@/domain/repositories/post-repository";
 import { err, InternalServerError, ok } from "@/errors";
-import { postMock } from "@/tests/mocks";
 import { fixDate } from "@/utils/date";
 import { Post } from "@/domain/entities/post";
+import { postMock, postSchemaMock } from "@/tests/mocks";
+import { PostId } from "@/domain/value-objects/ids";
 
 describe("CreatePostCommand", () => {
-  const { content } = postMock();
+  const { content } = postSchemaMock();
   const command = new CreatePostCommand(content);
 
   describe("getPostContent", () => {
@@ -23,12 +24,12 @@ describe("CreatePostCommand", () => {
 });
 
 describe("UpdatePostCommand", () => {
-  const { id, content } = postMock();
-  const command = new UpdatePostCommand(id.value!, content);
+  const { id, content } = postSchemaMock();
+  const command = new UpdatePostCommand(id, content);
 
   describe("getPostId", () => {
     it("should return PostId", () => {
-      expect(command.getPostId()).toEqual(id);
+      expect(command.getPostId()).toEqual(new PostId(id));
     });
   });
 
@@ -40,12 +41,12 @@ describe("UpdatePostCommand", () => {
 });
 
 describe("DeletePostCommand", () => {
-  const { id } = postMock();
-  const command = new DeletePostCommand(id.value!);
+  const { id } = postSchemaMock();
+  const command = new DeletePostCommand(id);
 
   describe("getPostId", () => {
     it("should return PostId", () => {
-      expect(command.getPostId()).toEqual(id);
+      expect(command.getPostId()).toEqual(new PostId(id));
     });
   });
 });
@@ -54,7 +55,6 @@ describe("PostApplicationService", () => {
   fixDate();
   const postRepository = {
     findById: vi.fn(),
-    findMany: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
@@ -63,7 +63,7 @@ describe("PostApplicationService", () => {
   const error = err(new InternalServerError());
 
   describe("create", () => {
-    const { content } = postMock();
+    const { content } = postSchemaMock();
     const command = new CreatePostCommand(content);
 
     it("createでエラー", async () => {
