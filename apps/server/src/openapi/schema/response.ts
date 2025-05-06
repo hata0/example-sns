@@ -1,11 +1,15 @@
 import { z } from "@hono/zod-openapi";
 
-export const ErrorResponseSchema = z
-  .object({
-    message: z.string().openapi({ example: "bad request" }),
-  })
-  .openapi("ErrorResponse");
-export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
+export const errorResponseSchemaFactory = (exampleMessage: string) => {
+  return z
+    .object({
+      message: z.string().openapi({ example: exampleMessage }),
+    })
+    .openapi("ErrorResponse");
+};
+export type ErrorResponse = z.infer<
+  ReturnType<typeof errorResponseSchemaFactory>
+>;
 
 export const SuccessResponseSchema = z
   .object({

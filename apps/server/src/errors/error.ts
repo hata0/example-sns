@@ -1,4 +1,4 @@
-export type ErrorStatusCode = 400 | 404 | 500;
+export type ErrorStatusCode = 400 | 401 | 404 | 500;
 
 export class BaseError extends Error {
   constructor(
@@ -12,6 +12,12 @@ export class BaseError extends Error {
 export class AppError extends BaseError {
   constructor(message: string, status: ErrorStatusCode) {
     super(message, status);
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor() {
+    super("unauthorized", 401);
   }
 }
 

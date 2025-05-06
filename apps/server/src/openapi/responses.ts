@@ -1,19 +1,30 @@
 import type { RouteConfig } from "@hono/zod-openapi";
-import { ErrorResponseSchema, SuccessResponseSchema } from "./schema/response";
+import {
+  errorResponseSchemaFactory,
+  SuccessResponseSchema,
+} from "./schema/response";
 
 export const errorResponses = {
   400: {
     content: {
       "application/json": {
-        schema: ErrorResponseSchema,
+        schema: errorResponseSchemaFactory("bad request"),
       },
     },
     description: "bad request",
   },
+  401: {
+    content: {
+      "application/json": {
+        schema: errorResponseSchemaFactory("unauthorized"),
+      },
+    },
+    description: "unauthorized",
+  },
   404: {
     content: {
       "application/json": {
-        schema: ErrorResponseSchema,
+        schema: errorResponseSchemaFactory("not found"),
       },
     },
     description: "not found",
@@ -21,7 +32,7 @@ export const errorResponses = {
   500: {
     content: {
       "application/json": {
-        schema: ErrorResponseSchema,
+        schema: errorResponseSchemaFactory("internal server error"),
       },
     },
     description: "internal server error",

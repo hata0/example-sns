@@ -1,7 +1,8 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { describe, expect, it } from "vitest";
+import { HTTPException } from "hono/http-exception";
 import { handleError, handleZodError } from "./handler";
-import { InternalServerError } from "./error";
+import { InternalServerError, UnauthorizedError } from "./error";
 import { RequestClient } from "@/tests/request";
 
 describe("handleZodError", () => {
@@ -54,6 +55,22 @@ describe("handleZodError", () => {
 });
 
 describe("handleError", () => {
+  it("401", async () => {
+    const app = new OpenAPIHono();
+    app.onError(handleError);
+
+    app.get("/", () => {
+      throw new HTTPException(401);
+    });
+    const client = new RequestClient(app);
+
+    const res = await client.request("GET", "/");
+
+    const e = new UnauthorizedError();
+    expect(res.status).toBe(e.status);
+    expect(await res.json()).toEqual({ message: e.message });
+  });
+
   it("500", async () => {
     const app = new OpenAPIHono();
     app.onError(handleError);

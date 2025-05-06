@@ -50,7 +50,7 @@ describe("PostCommandController", () => {
     it("500", async () => {
       service.create.mockResolvedValueOnce(err(e));
       const res = await client.request("POST", "", {
-        body: {
+        jsonBody: {
           content,
         },
       });
@@ -61,7 +61,7 @@ describe("PostCommandController", () => {
     it("200", async () => {
       service.create.mockResolvedValueOnce(ok());
       const res = await client.request("POST", "", {
-        body: {
+        jsonBody: {
           content,
         },
       });
@@ -77,7 +77,7 @@ describe("PostCommandController", () => {
     it("500", async () => {
       service.update.mockResolvedValueOnce(err(e));
       const res = await client.request("PUT", `/${id}`, {
-        body: {
+        jsonBody: {
           content,
         },
       });
@@ -88,7 +88,7 @@ describe("PostCommandController", () => {
     it("200", async () => {
       service.update.mockResolvedValueOnce(ok());
       const res = await client.request("PUT", `/${id}`, {
-        body: {
+        jsonBody: {
           content,
         },
       });

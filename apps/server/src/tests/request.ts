@@ -11,15 +11,23 @@ export class RequestClient {
   async request(
     method: Method,
     input?: RequestInfo | URL,
-    init?: Omit<RequestInit, "method" | "body"> & { body?: unknown },
+    init?: Omit<RequestInit, "headers" | "method"> & {
+      headers?: HeadersInit;
+      jsonBody?: unknown;
+    },
   ) {
     const res = await this.app.request(`${this.baseUrl || ""}${input || ""}`, {
-      headers: init?.body
-        ? new Headers({ "Content-Type": "application/json" })
-        : undefined,
-      ...init,
+      headers: new Headers(
+        init?.jsonBody
+          ? {
+              "Content-Type": "application/json",
+              ...init?.headers,
+            }
+          : init?.headers,
+      ),
       method,
-      body: init?.body ? JSON.stringify(init.body) : undefined,
+      body: init?.jsonBody ? JSON.stringify(init.jsonBody) : undefined,
+      ...init,
     });
 
     return res;
