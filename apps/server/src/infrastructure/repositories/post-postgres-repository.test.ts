@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Container } from "inversify";
+import { PostgresDatabase } from "../database/postgresql";
 import { PostPostgresRepository } from "./post-postgres-repository";
-import { PostgresDatabase } from "@/db/postgresql";
 import { PostId } from "@/domain/value-objects/ids";
 import { postMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";

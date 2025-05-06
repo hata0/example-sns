@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
-import { PostgresDatabase } from "@/db/postgresql";
+import { PostgresDatabase } from "../database/postgresql";
+import type { Post as PostRecord } from "../database/postgresql/generated/prisma";
 import { Post } from "@/domain/entities/post";
 import type { PostRepository } from "@/domain/repositories/post-repository";
 import { PostId } from "@/domain/value-objects/ids";
@@ -12,7 +13,6 @@ import {
   ok,
   Result,
 } from "@/errors";
-import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
 import { DATABASE_BINDINGS } from "@/inversify";
 
 @injectable()

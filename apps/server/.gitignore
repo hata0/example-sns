@@ -27,4 +27,4 @@ lerna-debug.log*
 # misc
 .DS_Store
 
-src/db/postgresql/generated/prisma/
+src/infrastructure/database/postgresql/generated/prisma/

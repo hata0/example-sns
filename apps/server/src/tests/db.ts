@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
-import { PrismaClientKnownRequestError } from "@/db/postgresql/generated/prisma/internal/prismaNamespace";
-import { PostgresDatabase } from "@/db/postgresql";
+import { PostgresDatabase } from "@/infrastructure/database/postgresql";
+import { PrismaClientKnownRequestError } from "@/infrastructure/database/postgresql/generated/prisma/internal/prismaNamespace";
 
 export const setupDatabase = async () => {
   const db = new PostgresDatabase();

@@ -2,7 +2,7 @@ import { cors } from "hono/cors";
 import { newApp } from "@/hono";
 import { createHandler } from "@/node";
 import { NotFoundError } from "@/errors";
-import { PostgresDatabase } from "@/db/postgresql";
+import { PostgresDatabase } from "@/infrastructure/database/postgresql";
 
 const app = newApp();
 app.notFound((c) => {

@@ -1,7 +1,7 @@
 import { Container } from "inversify";
 import { PostPostgresRepository } from "../repositories/post-postgres-repository";
 import { PostPostgresQueryService } from "../queries/post-postgres-service";
-import { PostgresDatabase } from "@/db/postgresql";
+import { PostgresDatabase } from "../database/postgresql";
 import type { PostRepository } from "@/domain/repositories/post-repository";
 import {
   APPLICATION_SERVICE_BINDINGS,
@@ -15,6 +15,7 @@ import { PostApplicationService } from "@/application/commands/post-service";
 import type { PostQueryService } from "@/application/queries/post-service";
 import { PostQueryController } from "@/interface/controllers/queries/post-query-controller";
 import { PostCommandController } from "@/interface/controllers/commands/post-command-controller";
+import "reflect-metadata";
 
 const bindDatabases = (container: Container) => {
   container

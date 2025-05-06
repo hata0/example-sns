@@ -1,5 +1,5 @@
 import { fromPromise } from "neverthrow";
-import { PostgresDatabase } from "./";
+import { PostgresDatabase } from ".";
 import { prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
 

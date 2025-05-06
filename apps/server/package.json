@@ -2,8 +2,8 @@
   "name": "server",
   "type": "module",
   "prisma": {
-    "schema": "./src/db/postgresql/schema.prisma",
-    "seed": "tsx src/db/postgresql/seed.ts"
+    "schema": "./src/infrastructure/database/postgresql/schema.prisma",
+    "seed": "tsx src/infrastructure/database/postgresql/seed.ts"
   },
   "scripts": {
     "with-env": "dotenv -e .env",

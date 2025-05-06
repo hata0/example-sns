@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
+import type { Post as PostRecord } from "@/infrastructure/database/postgresql/generated/prisma";
 import { Post } from "@/domain/entities/post";
 import { PostId } from "@/domain/value-objects/ids";
 import type { Post as PostSchema } from "@/openapi/schema/post";

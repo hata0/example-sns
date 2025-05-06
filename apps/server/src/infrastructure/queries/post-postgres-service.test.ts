@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Container } from "inversify";
+import { PostgresDatabase } from "../database/postgresql";
 import { PostPostgresQueryService } from "./post-postgres-service";
 import {
   EmptyIdError,
@@ -14,7 +15,6 @@ import {
 } from "@/application/queries/post-service";
 import { postSchemaMock, prismaPostMock } from "@/tests/mocks";
 import { generateRandomArray } from "@/utils/array";
-import { PostgresDatabase } from "@/db/postgresql";
 import { PostSchema } from "@/openapi/schema/post";
 import { setupDatabase } from "@/tests/db";
 import { DATABASE_BINDINGS } from "@/inversify";

@@ -1,4 +1,6 @@
 import { inject, injectable } from "inversify";
+import { PostgresDatabase } from "../database/postgresql";
+import type { Post as PostRecord } from "../database/postgresql/generated/prisma";
 import { getSkip, getTake } from "./utils";
 import {
   EmptyIdError,
@@ -13,8 +15,6 @@ import type {
   ListPostQueryServiceInput,
   PostQueryService,
 } from "@/application/queries/post-service";
-import type { PostgresDatabase } from "@/db/postgresql";
-import type { Post as PostRecord } from "@/db/postgresql/generated/prisma";
 import type { Post as PostSchema } from "@/openapi/schema/post";
 import type {
   GetPostsResponse,
