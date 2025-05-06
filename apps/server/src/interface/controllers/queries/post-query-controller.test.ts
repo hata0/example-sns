@@ -14,6 +14,7 @@ import type {
   ListPostsResponse,
 } from "@/openapi/schema/post";
 import { generateRandomArray } from "@/utils/array";
+import { RequestClient } from "@/tests/request";
 
 describe("PostQueryController", () => {
   const service = {
@@ -24,6 +25,7 @@ describe("PostQueryController", () => {
   const app = new OpenAPIHono();
   app.openapi(getPostsRouteConfig, controller.get.bind(controller));
   app.openapi(listPostsRouteConfig, controller.list.bind(controller));
+  const client = new RequestClient(app, "/posts");
   const e = new InternalServerError();
   const errorResponse = { message: e.message };
 
@@ -32,7 +34,7 @@ describe("PostQueryController", () => {
 
     it("500", async () => {
       service.get.mockResolvedValueOnce(err(e));
-      const res = await app.request(`/posts/${post.id}`);
+      const res = await client.request("GET", `/${post.id}`);
       expect(res.status).toBe(e.status);
       expect(await res.json()).toEqual(errorResponse);
     });
@@ -40,7 +42,7 @@ describe("PostQueryController", () => {
     it("200", async () => {
       const response = { post } satisfies GetPostsResponse;
       service.get.mockResolvedValueOnce(ok(response));
-      const res = await app.request(`/posts/${post.id}`);
+      const res = await client.request("GET", `/${post.id}`);
       expect(service.get).toHaveBeenCalledWith(
         new GetPostQueryServiceInput(post.id),
       );
@@ -59,7 +61,7 @@ describe("PostQueryController", () => {
 
     it("500", async () => {
       service.list.mockResolvedValueOnce(err(e));
-      const res = await app.request(`/posts?limit=${limit}&page=${page}`);
+      const res = await client.request("GET", `?limit=${limit}&page=${page}`);
       expect(res.status).toBe(e.status);
       expect(await res.json()).toEqual(errorResponse);
     });
@@ -67,7 +69,7 @@ describe("PostQueryController", () => {
     it("200", async () => {
       const response = { posts } satisfies ListPostsResponse;
       service.list.mockResolvedValueOnce(ok(response));
-      const res = await app.request(`/posts?limit=${limit}&page=${page}`);
+      const res = await client.request("GET", `?limit=${limit}&page=${page}`);
       expect(service.list).toHaveBeenCalledWith(
         new ListPostQueryServiceInput(limit, page),
       );

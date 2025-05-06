@@ -14,6 +14,7 @@ import {
 } from "@/openapi/path/post";
 import { err, InternalServerError, ok } from "@/errors";
 import { postSchemaMock } from "@/tests/mocks";
+import { RequestClient } from "@/tests/request";
 
 describe("PostCommandController", () => {
   const service = {
@@ -28,6 +29,7 @@ describe("PostCommandController", () => {
   app.openapi(createPostsRouteConfig, controller.create.bind(controller));
   app.openapi(updatePostsRouteConfig, controller.update.bind(controller));
   app.openapi(deletePostsRouteConfig, controller.delete.bind(controller));
+  const client = new RequestClient(app, "/posts");
   const e = new InternalServerError();
   const errorResponse = { message: e.message };
   const successStatus = 200;
@@ -37,12 +39,10 @@ describe("PostCommandController", () => {
   describe("create", () => {
     it("500", async () => {
       service.create.mockResolvedValueOnce(err(e));
-      const res = await app.request("/posts", {
-        method: "POST",
-        body: JSON.stringify({
+      const res = await client.request("POST", "", {
+        body: {
           content,
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
+        },
       });
       expect(res.status).toBe(e.status);
       expect(await res.json()).toEqual(errorResponse);
@@ -50,12 +50,10 @@ describe("PostCommandController", () => {
 
     it("200", async () => {
       service.create.mockResolvedValueOnce(ok());
-      const res = await app.request("/posts", {
-        method: "POST",
-        body: JSON.stringify({
+      const res = await client.request("POST", "", {
+        body: {
           content,
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
+        },
       });
       expect(service.create).toHaveBeenCalledWith(
         new CreatePostCommand(content),
@@ -68,12 +66,10 @@ describe("PostCommandController", () => {
   describe("update", () => {
     it("500", async () => {
       service.update.mockResolvedValueOnce(err(e));
-      const res = await app.request(`/posts/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
+      const res = await client.request("PUT", `/${id}`, {
+        body: {
           content,
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
+        },
       });
       expect(res.status).toBe(e.status);
       expect(await res.json()).toEqual(errorResponse);
@@ -81,12 +77,10 @@ describe("PostCommandController", () => {
 
     it("200", async () => {
       service.update.mockResolvedValueOnce(ok());
-      const res = await app.request(`/posts/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({
+      const res = await client.request("PUT", `/${id}`, {
+        body: {
           content,
-        }),
-        headers: new Headers({ "Content-Type": "application/json" }),
+        },
       });
       expect(service.update).toHaveBeenCalledWith(
         new UpdatePostCommand(id, content),
@@ -99,18 +93,14 @@ describe("PostCommandController", () => {
   describe("delete", () => {
     it("500", async () => {
       service.delete.mockResolvedValueOnce(err(e));
-      const res = await app.request(`/posts/${id}`, {
-        method: "DELETE",
-      });
+      const res = await client.request("DELETE", `/${id}`);
       expect(res.status).toBe(e.status);
       expect(await res.json()).toEqual(errorResponse);
     });
 
     it("200", async () => {
       service.delete.mockResolvedValueOnce(ok());
-      const res = await app.request(`/posts/${id}`, {
-        method: "DELETE",
-      });
+      const res = await client.request("DELETE", `/${id}`);
       expect(service.delete).toHaveBeenCalledWith(new DeletePostCommand(id));
       expect(res.status).toBe(successStatus);
       expect(await res.json()).toEqual(successResponse);

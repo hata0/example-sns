@@ -2,6 +2,7 @@ import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { describe, expect, it } from "vitest";
 import { handleError, handleZodError } from "./handler";
 import { InternalServerError } from "./error";
+import { RequestClient } from "@/tests/request";
 
 describe("handleZodError", () => {
   const exampleRoute = createRoute({
@@ -33,9 +34,10 @@ describe("handleZodError", () => {
     const { id } = c.req.valid("param");
     return c.json({ id }, 200);
   });
+  const client = new RequestClient(app);
 
   it("result.successがfalseの場合、400", async () => {
-    const res = await app.request("/abc");
+    const res = await client.request("GET", "/abc");
 
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({
@@ -44,7 +46,7 @@ describe("handleZodError", () => {
   });
 
   it("それ以外の場合、200になる", async () => {
-    const res = await app.request("/1");
+    const res = await client.request("GET", "/1");
 
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ id: 1 });
@@ -59,8 +61,9 @@ describe("handleError", () => {
     app.get("/", () => {
       throw new Error();
     });
+    const client = new RequestClient(app);
 
-    const res = await app.request("/");
+    const res = await client.request("GET", "/");
 
     const e = new InternalServerError();
     expect(res.status).toBe(e.status);
