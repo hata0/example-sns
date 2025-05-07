@@ -9,7 +9,7 @@
     "with-env": "dotenv -e .env",
     "with-env:development": "dotenv -e .env.development.local",
     "with-env:test": "dotenv -e .env.test.local",
-    "dev": "pnpm with-env tsx watch src/cmd/server/index.ts",
+    "dev": "docker compose up -d && pnpm with-env tsx watch src/cmd/server/index.ts",
     "test": "docker compose up -d && pnpm with-env:test vitest",
     "build": "tsup",
     "preview": "pnpm with-env:development node dist/index.js",
