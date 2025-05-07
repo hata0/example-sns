@@ -36,7 +36,7 @@ export class HttpClient {
 }
 
 export const fetcher = <T>(...args: Parameters<typeof fetch>): Promise<T> => {
-  const url = process.env.DATABASE_URL;
+  const url = process.env.BACKEND_URL;
   if (!url) {
     throw new Error("database url is required");
   }
