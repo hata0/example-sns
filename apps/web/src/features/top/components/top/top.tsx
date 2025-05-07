@@ -1,5 +1,8 @@
 "use client";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { Button } from "@/components/shadcn-ui/button";
 import { useGetPostsSuspense } from "@/gen/api/posts/posts";
+import { auth } from "@/lib/firebase";
 
 export const Top = () => {
   const { data } = useGetPostsSuspense({
@@ -8,5 +11,17 @@ export const Top = () => {
   });
   console.log(data);
 
-  return <div className="text-destructive">hello</div>;
+  return (
+    <div>
+      <div>
+        <Button
+          onClick={async () => {
+            await signInWithPopup(auth, new GoogleAuthProvider());
+          }}
+        >
+          login
+        </Button>
+      </div>
+    </div>
+  );
 };
