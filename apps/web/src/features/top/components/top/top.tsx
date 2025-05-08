@@ -1,5 +1,6 @@
 "use client";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { fromPromise } from "neverthrow";
 import { Button } from "@/components/shadcn-ui/button";
 import { useGetPostsSuspense } from "@/gen/api/posts/posts";
 import { auth } from "@/lib/firebase";
@@ -9,17 +10,47 @@ export const Top = () => {
     limit: "3",
     page: "1",
   });
-  console.log(data);
 
   return (
     <div>
       <div>
         <Button
           onClick={async () => {
-            await signInWithPopup(auth, new GoogleAuthProvider());
+            const signInRes = await fromPromise(
+              signInWithPopup(auth, new GoogleAuthProvider()),
+              (e) => e,
+            );
+            if (signInRes.isErr()) {
+              console.error(signInRes.error);
+            } else {
+              const refreshToken = signInRes.value.user.refreshToken;
+              const idToken = await signInRes.value.user.getIdToken();
+              await fetch(
+                `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/firebase`,
+                {
+                  method: "POST",
+                  body: JSON.stringify({
+                    accessToken: idToken,
+                    refreshToken,
+                  }),
+                },
+              );
+            }
           }}
         >
           login
+        </Button>
+        <Button
+          onClick={async () => {
+            await fetch(
+              `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/refresh`,
+              {
+                method: "POST",
+              },
+            );
+          }}
+        >
+          test
         </Button>
       </div>
     </div>

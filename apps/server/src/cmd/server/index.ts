@@ -12,10 +12,11 @@ app.notFound((c) => {
 app.use(
   "*",
   cors({
-    origin: "*",
+    origin: process.env.FRONTEND_URL ?? "",
     allowHeaders: ["*"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     maxAge: 600,
+    credentials: true,
   }),
 );
 
