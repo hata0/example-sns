@@ -1,4 +1,5 @@
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
 import { newApp } from "@/hono";
 import { createHandler } from "@/node";
 import { fromPromise, NotFoundError } from "@/errors";
@@ -20,6 +21,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use("*", csrf({ origin: process.env.FRONTEND_URL }));
 app.use("*", async (c, next) => {
   const authHeader = c.req.header("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
