@@ -1,9 +1,8 @@
 import { fromPromise } from "neverthrow";
 import { cookies } from "next/headers";
 
-export const POST = async () => {
-  const cookieStore = await cookies();
-  const refreshToken = cookieStore.get("refresh_token");
+export const POST = async (req: Request) => {
+  const { refreshToken } = await req.json();
   if (refreshToken === undefined) {
     return Response.json(
       { message: "refresh token is required" },
@@ -19,7 +18,7 @@ export const POST = async () => {
         method: "POST",
         body: JSON.stringify({
           grant_type: "refresh_token",
-          refreshToken: refreshToken.value,
+          refreshToken,
         }),
       },
     ),
@@ -35,6 +34,7 @@ export const POST = async () => {
 
   const { id_token: accessToken } = await res.value.json();
 
+  const cookieStore = await cookies();
   cookieStore.set("access_token", accessToken, {
     path: "/",
     secure: true,
@@ -42,5 +42,5 @@ export const POST = async () => {
     sameSite: "strict",
   });
 
-  return Response.json({ message: "success" }, { status: 200 });
+  return Response.json({ accessToken }, { status: 200 });
 };
