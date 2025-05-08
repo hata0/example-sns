@@ -1,6 +1,6 @@
 import { defineConfig } from "orval";
 
-const INPUT = `${process.env.BACKEND_URL}/doc`;
+const INPUT = `${process.env.NEXT_PUBLIC_BACKEND_URL}/doc`;
 const OUTPUT = "src/gen/api";
 
 export default defineConfig({

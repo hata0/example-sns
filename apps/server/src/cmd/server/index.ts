@@ -1,8 +1,9 @@
 import { cors } from "hono/cors";
 import { newApp } from "@/hono";
 import { createHandler } from "@/node";
-import { NotFoundError } from "@/errors";
+import { fromPromise, NotFoundError } from "@/errors";
 import { registerPostApi } from "@/router/post";
+import { firebaseAuth } from "@/firebase";
 
 const app = newApp();
 app.notFound((c) => {
@@ -19,6 +20,24 @@ app.use(
     credentials: true,
   }),
 );
+app.use("*", async (c, next) => {
+  const authHeader = c.req.header("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return c.json({ message: "invalid authorization header" }, 401);
+  }
+
+  const accessToken = authHeader.split(" ")[1];
+
+  const res = await fromPromise(
+    firebaseAuth.verifyIdToken(accessToken),
+    (e) => e,
+  );
+  if (res.isErr()) {
+    return c.json({ message: "unauthorized" }, 401);
+  }
+
+  await next();
+});
 
 registerPostApi(app);
 

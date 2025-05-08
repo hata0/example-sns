@@ -28,6 +28,7 @@ export const Top = () => {
               await fetch(
                 `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/firebase`,
                 {
+                  cache: "no-store",
                   method: "POST",
                   body: JSON.stringify({
                     accessToken: idToken,
@@ -39,18 +40,6 @@ export const Top = () => {
           }}
         >
           login
-        </Button>
-        <Button
-          onClick={async () => {
-            await fetch(
-              `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/refresh`,
-              {
-                method: "POST",
-              },
-            );
-          }}
-        >
-          test
         </Button>
       </div>
     </div>

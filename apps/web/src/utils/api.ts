@@ -35,11 +35,40 @@ export class HttpClient {
   }
 }
 
-export const fetcher = <T>(...args: Parameters<typeof fetch>): Promise<T> => {
+const getCookies = async (): Promise<Map<string, string>> => {
+  if (typeof window === "undefined") {
+    const { cookies } = await import("next/headers");
+    const array = (await cookies()).getAll();
+    return new Map(array.map(({ name, value }) => [name, value]));
+  } else {
+    const cookies = (await import("js-cookie")).default;
+    const obj = cookies.get();
+    return new Map(Object.entries(obj));
+  }
+};
+
+export const fetcher = async <T>(
+  ...[input, init]: Parameters<typeof fetch>
+): Promise<T> => {
   const url = process.env.NEXT_PUBLIC_BACKEND_URL;
   if (!url) {
     throw new Error("database url is required");
   }
 
-  return new HttpClient(url).fetch(...args);
+  const accessToken = (await getCookies()).get("access_token");
+
+  if (accessToken === undefined) {
+    await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/refresh`, {
+      cache: "no-store",
+      method: "POST",
+    });
+  }
+
+  return new HttpClient(url).fetch(input, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      ...init?.headers,
+    },
+  });
 };

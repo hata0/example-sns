@@ -15,6 +15,7 @@ export const POST = async () => {
     fetch(
       `https://securetoken.googleapis.com/v1/token?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
       {
+        cache: "no-store",
         method: "POST",
         body: JSON.stringify({
           grant_type: "refresh_token",
@@ -37,7 +38,6 @@ export const POST = async () => {
   cookieStore.set("access_token", accessToken, {
     path: "/",
     secure: true,
-    httpOnly: true,
     maxAge: 60 * 60,
     sameSite: "strict",
   });
