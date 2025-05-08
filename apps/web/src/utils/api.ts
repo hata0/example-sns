@@ -47,28 +47,6 @@ const getCookies = async (): Promise<Map<string, string>> => {
   }
 };
 
-const getAccessToken = async (): Promise<string> => {
-  const cookies = await getCookies();
-  const accessToken = cookies.get("access_token");
-
-  if (accessToken === undefined) {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/refresh`,
-      {
-        cache: "no-store",
-        method: "POST",
-        body: JSON.stringify({
-          refreshToken: cookies.get("refresh_token"),
-        }),
-      },
-    );
-    const { accessToken: newAccessToken } = await res.json();
-    return newAccessToken;
-  } else {
-    return accessToken;
-  }
-};
-
 export const fetcher = async <T>(
   ...[input, init]: Parameters<typeof fetch>
 ): Promise<T> => {
@@ -77,7 +55,7 @@ export const fetcher = async <T>(
     throw new Error("database url is required");
   }
 
-  const accessToken = await getAccessToken();
+  const accessToken = (await getCookies()).get("access_token");
 
   return new HttpClient(url).fetch(input, {
     ...init,
