@@ -1,4 +1,5 @@
 import { fromPromise } from "neverthrow";
+import { serverUrl } from "@/env";
 
 export class HttpError extends Error {
   constructor(public readonly status: number) {
@@ -50,14 +51,9 @@ const getCookies = async (): Promise<Map<string, string>> => {
 export const fetcher = async <T>(
   ...[input, init]: Parameters<typeof fetch>
 ): Promise<T> => {
-  const url = process.env.NEXT_PUBLIC_BACKEND_URL;
-  if (!url) {
-    throw new Error("database url is required");
-  }
-
   const accessToken = (await getCookies()).get("access_token");
 
-  return new HttpClient(url).fetch(input, {
+  return new HttpClient(serverUrl ?? "").fetch(input, {
     ...init,
     headers: {
       Authorization: `Bearer ${accessToken}`,
