@@ -1,19 +1,14 @@
 "use client";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { fromPromise } from "neverthrow";
+import { Tasks } from "../tasks";
 import { Button } from "@/components/shadcn-ui/button";
-import { useGetPostsSuspense } from "@/gen/api/posts/posts";
 import { auth } from "@/lib/firebase";
 
 export const Top = () => {
-  const { data } = useGetPostsSuspense({
-    limit: "3",
-    page: "1",
-  });
-
   return (
     <div>
-      <div>
+      <main className="flex flex-col justify-center gap-y-4">
         <Button
           onClick={async () => {
             const signInRes = await fromPromise(
@@ -38,10 +33,12 @@ export const Top = () => {
               );
             }
           }}
+          className="w-fit"
         >
-          login
+          Googleでログイン
         </Button>
-      </div>
+        <Tasks />
+      </main>
     </div>
   );
 };
