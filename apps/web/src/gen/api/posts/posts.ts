@@ -91,7 +91,7 @@ const {query: queryOptions} = options ?? {};
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsId>>> = ({ signal }) => getPostsId(id, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsId>>> = () => getPostsId(id, );
 
       
 
@@ -154,7 +154,7 @@ const {query: queryOptions} = options ?? {};
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsId>>> = ({ signal }) => getPostsId(id, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsId>>> = () => getPostsId(id, );
 
       
 
@@ -368,7 +368,7 @@ const {query: queryOptions} = options ?? {};
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = ({ signal }) => getPosts(params, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = () => getPosts(params, );
 
       
 
@@ -431,7 +431,7 @@ const {query: queryOptions} = options ?? {};
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = ({ signal }) => getPosts(params, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = () => getPosts(params, );
 
       
 

@@ -3,7 +3,10 @@ import { cookies } from "next/headers";
 import { firebaseAuth } from "@/lib/firebase/admin";
 
 export const POST = async (req: Request) => {
-  const { accessToken, refreshToken } = await req.json();
+  const { accessToken, refreshToken } = await req.json<{
+    accessToken: string;
+    refreshToken: string;
+  }>();
 
   const res = await fromPromise(
     firebaseAuth.verifyIdToken(accessToken),

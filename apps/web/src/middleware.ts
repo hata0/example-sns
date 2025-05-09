@@ -26,7 +26,9 @@ export const middleware = async (req: NextRequest) => {
       return;
     }
 
-    const { id_token: newAccessToken } = await res.value.json();
+    const { id_token: newAccessToken } = await res.value.json<{
+      id_token: string;
+    }>();
 
     const response = NextResponse.next();
     response.cookies.set("access_token", newAccessToken, {

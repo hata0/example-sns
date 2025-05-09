@@ -29,7 +29,7 @@ export class HttpClient {
       throw new HttpError(res.value.status);
     }
 
-    const data = await res.value.json();
+    const data = await res.value.json<T>();
 
     return data;
   }
