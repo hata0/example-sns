@@ -7,7 +7,7 @@ export default async function TopPage() {
   const client = getQueryClient();
   await client.prefetchQuery(
     getGetPostsSuspenseQueryOptions({
-      limit: "3",
+      limit: "50",
       page: "1",
     }),
   );

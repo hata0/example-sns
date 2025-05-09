@@ -5,7 +5,7 @@ import { useGetPostsSuspense } from "@/gen/api/posts/posts";
 
 export const TasksList = () => {
   const { data } = useGetPostsSuspense({
-    limit: "3",
+    limit: "50",
     page: "1",
   });
 

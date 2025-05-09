@@ -2,6 +2,7 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { fromPromise } from "neverthrow";
 import { Tasks } from "../tasks";
+import { TasksForm } from "../tasks-form";
 import { Button } from "@/components/shadcn-ui/button";
 import { auth } from "@/lib/firebase";
 
@@ -37,6 +38,7 @@ export const Top = () => {
         >
           Googleでログイン
         </Button>
+        <TasksForm />
         <Tasks />
       </main>
     </div>
