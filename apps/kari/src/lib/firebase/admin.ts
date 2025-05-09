@@ -5,20 +5,18 @@ import {
   getApps,
   type ServiceAccount,
 } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
 
-const { env } = getCloudflareContext();
-
-const serviceAccount: ServiceAccount = {
-  projectId: env.FIREBASE_ADMIN_PROJECT_ID,
-  privateKey: (env.FIREBASE_ADMIN_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
-  clientEmail: env.FIREBASE_ADMIN_CLIENT_EMAIL,
+const getServiceAccount = async (): Promise<ServiceAccount> => {
+  const { env } = getCloudflareContext();
+  return {
+    projectId: env.FIREBASE_ADMIN_PROJECT_ID,
+    privateKey: (env.FIREBASE_ADMIN_PRIVATE_KEY || "").replace(/\\n/g, "\n"),
+    clientEmail: env.FIREBASE_ADMIN_CLIENT_EMAIL,
+  };
 };
 
-export const admin =
+export const getAdmin = async () =>
   getApps()[0] ||
   initializeApp({
-    credential: cert(serviceAccount),
+    credential: cert(await getServiceAccount()),
   });
-
-export const adminAuth = getAuth();
