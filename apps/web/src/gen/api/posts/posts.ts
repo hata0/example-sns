@@ -49,7 +49,7 @@ import type {
   PutPostsId500,
   SuccessResponse,
   UpdatePostBody
-} from '.././model';
+} from '../model';
 
 import { fetcher } from '../../../utils/api';
 

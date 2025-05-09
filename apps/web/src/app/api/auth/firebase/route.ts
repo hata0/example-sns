@@ -1,6 +1,4 @@
-import { fromPromise } from "neverthrow";
 import { cookies } from "next/headers";
-import { firebaseAuth } from "@/lib/firebase/admin";
 
 export const POST = async (req: Request) => {
   const { accessToken, refreshToken } = await req.json<{
@@ -8,13 +6,14 @@ export const POST = async (req: Request) => {
     refreshToken: string;
   }>();
 
-  const res = await fromPromise(
-    firebaseAuth.verifyIdToken(accessToken),
-    (e) => e,
-  );
-  if (res.isErr()) {
-    return Response.json({ message: "invalid id token" }, { status: 401 });
-  }
+  // TODO: firebaseとcloudflareの相性問題でこれは使えないので後で対策
+  // const res = await fromPromise(
+  //   getAuth(await getAdmin()).verifyIdToken(accessToken),
+  //   (e) => e,
+  // );
+  // if (res.isErr()) {
+  //   return Response.json({ message: "invalid id token" }, { status: 401 });
+  // }
 
   const cookieStore = await cookies();
   cookieStore.set("access_token", accessToken, {

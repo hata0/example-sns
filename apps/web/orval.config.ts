@@ -1,6 +1,6 @@
 import { defineConfig } from "orval";
 
-const INPUT = `${process.env.NEXT_PUBLIC_BACKEND_URL}/doc`;
+const INPUT = `${process.env.NEXT_PUBLIC_SERVER_URL}/doc`;
 const OUTPUT = "src/gen/api";
 
 export default defineConfig({
@@ -20,6 +20,7 @@ export default defineConfig({
         query: {
           useSuspenseQuery: true,
           version: 5,
+          signal: false,
         },
         mutator: {
           path: "src/utils/api.ts",

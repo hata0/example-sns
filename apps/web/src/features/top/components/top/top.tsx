@@ -6,7 +6,8 @@ import { Suspense } from "react";
 import { Tasks } from "../tasks";
 import { TasksForm } from "../tasks-form";
 import { Button } from "@/components/shadcn-ui/button";
-import { auth } from "@/lib/firebase";
+import { clientAuth } from "@/lib/firebase/client";
+import { clientUrl } from "@/env";
 
 export const Top = () => {
   return (
@@ -19,7 +20,7 @@ export const Top = () => {
               <Button
                 onClick={async () => {
                   const signInRes = await fromPromise(
-                    signInWithPopup(auth, new GoogleAuthProvider()),
+                    signInWithPopup(clientAuth, new GoogleAuthProvider()),
                     (e) => e,
                   );
                   if (signInRes.isErr()) {
@@ -27,17 +28,14 @@ export const Top = () => {
                   } else {
                     const refreshToken = signInRes.value.user.refreshToken;
                     const idToken = await signInRes.value.user.getIdToken();
-                    await fetch(
-                      `${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth/firebase`,
-                      {
-                        cache: "no-store",
-                        method: "POST",
-                        body: JSON.stringify({
-                          accessToken: idToken,
-                          refreshToken,
-                        }),
-                      },
-                    );
+                    await fetch(`${clientUrl}/api/auth/firebase`, {
+                      cache: "no-store",
+                      method: "POST",
+                      body: JSON.stringify({
+                        accessToken: idToken,
+                        refreshToken,
+                      }),
+                    });
                     window.location.reload();
                   }
                 }}

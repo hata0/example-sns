@@ -18,7 +18,7 @@ import type {
   GetPostsResponse,
   ListPostsResponse,
   SuccessResponse
-} from '.././model';
+} from '../model';
 
 
 export const getGetPostsIdResponseMock = (overrideResponse: Partial< GetPostsResponse > = {}): GetPostsResponse => ({post: {id: faker.string.uuid(), content: faker.string.alpha(20), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, updatedAt: `${faker.date.past().toISOString().split('.')[0]}Z`}, ...overrideResponse})

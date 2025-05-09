@@ -2,3 +2,4 @@
 shadcn-ui
 gen
 .open-next
+cloudflare-env.d.ts

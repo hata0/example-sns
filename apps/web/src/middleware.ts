@@ -1,5 +1,6 @@
 import { fromPromise } from "neverthrow";
 import { NextRequest, NextResponse } from "next/server";
+import { firebaseConfig } from "./lib/firebase/client";
 
 export const middleware = async (req: NextRequest) => {
   const accessToken = req.cookies.get("access_token");
@@ -9,7 +10,7 @@ export const middleware = async (req: NextRequest) => {
 
     const res = await fromPromise(
       fetch(
-        `https://securetoken.googleapis.com/v1/token?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
+        `https://securetoken.googleapis.com/v1/token?key=${firebaseConfig.apiKey}`,
         {
           cache: "no-store",
           method: "POST",
