@@ -19,7 +19,6 @@ export const POST = async (req: Request) => {
   cookieStore.set("access_token", accessToken, {
     path: "/",
     secure: true,
-    httpOnly: true,
     maxAge: 60 * 60,
     sameSite: "strict",
   });
