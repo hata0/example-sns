@@ -3,11 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { firebaseConfig } from "./lib/firebase/client";
 
 export const middleware = async (req: NextRequest) => {
-  const accessToken = req.cookies.get("access_token");
+  const accessToken = req.cookies.get("access_token")?.value;
   const response = NextResponse.next();
 
-  if (accessToken === undefined) {
-    const refreshToken = req.cookies.get("refresh_token");
+  if (!accessToken?.trim()) {
+    const refreshToken = req.cookies.get("refresh_token")?.value;
+    if (!refreshToken?.trim()) {
+      return response;
+    }
 
     const res = await fromPromise(
       fetch(
@@ -17,7 +20,7 @@ export const middleware = async (req: NextRequest) => {
           method: "POST",
           body: JSON.stringify({
             grant_type: "refresh_token",
-            refreshToken: refreshToken?.value,
+            refreshToken: refreshToken,
           }),
         },
       ),
@@ -31,12 +34,14 @@ export const middleware = async (req: NextRequest) => {
     const { id_token: newAccessToken } = await res.value.json<{
       id_token: string;
     }>();
+    if (!newAccessToken.trim()) {
+      return response;
+    }
 
     response.cookies.set("access_token", newAccessToken, {
       path: "/",
       secure: true,
-      maxAge: 30,
-      // maxAge: 60 * 60,
+      maxAge: 60 * 60,
       sameSite: "strict",
     });
     return response;
